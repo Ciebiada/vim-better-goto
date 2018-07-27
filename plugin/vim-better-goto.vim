@@ -2,7 +2,7 @@ let s:plugin_root_dir = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 ruby << EOF
   plugin_root_dir = VIM::evaluate('s:plugin_root_dir') 
-  require_relative "#{plugin_root_dir}/ruby/better-goto.rb"
+  require_relative "#{plugin_root_dir}/ruby/better_goto.rb"
 EOF
 
 function! GotoDefinition()

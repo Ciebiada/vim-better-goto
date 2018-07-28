@@ -74,7 +74,7 @@ describe BetterGoto do
     let(:cursor) { [2, 14] }
     let(:buffer) do
       [
-        'const foo = (bar, x) =>',
+        'const foo = (bar, x) => {',
         '  console.log(bar)',
         '}'
       ]
@@ -87,12 +87,50 @@ describe BetterGoto do
     let(:cursor) { [2, 14] }
     let(:buffer) do
       [
-        'const foo = bar =>',
+        'const foo = bar => {',
         '  console.log(bar)',
         '}'
       ]
     end
 
     it { should eq([1, 12]) }
+  end
+
+  context 'when variable is an argument of a function with no curly braces' do
+    let(:cursor) { [2, 31] }
+    let(:buffer) do
+      [
+        'const bar = 5',
+        'const foo = bar => console.log(bar)'
+      ]
+    end
+
+    it { should eq([2, 12]) }
+  end
+
+  context 'when variable is an argument of a function with no curly braces #2' do
+    let(:cursor) { [3, 14] }
+    let(:buffer) do
+      [
+        'const bar = 5',
+        'const foo = bar =>',
+        '  console.log(bar)'
+      ]
+    end
+
+    it { should eq([2, 12]) }
+  end
+
+  context 'should match words only' do
+    let(:cursor) { [3, 12] }
+    let(:buffer) do
+      [
+        'const bars = 5',
+        'const bar = 3',
+        'console.log(bar)'
+      ]
+    end
+
+    it { should eq([2, 6]) }
   end
 end

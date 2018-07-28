@@ -4,7 +4,9 @@ class BetterGoto
   def goto_definition(cursor, buffer)
     word = word_at_cursor(cursor, buffer)
 
-    find_definition(cursor, word, buffer)
+    definition = find_definition(cursor, word, buffer)
+    return cursor if definition.nil?
+    definition
   end
 
   private
@@ -15,7 +17,7 @@ class BetterGoto
 
     if found.nil?
       return find_definition(start, word, buffer) if start != [1, 0]
-      return cursor
+      return nil
     end
 
     found
@@ -28,9 +30,9 @@ class BetterGoto
     (y1..y2).each do |y|
       line = y == y2 ? buffer[y][0...x2] : buffer[y]
 
-      x = line.index(word)
+      x = line.index(/[^\w]#{word}[^\w]/)
       unless x.nil?
-        return y, x
+        return y, x + 1
       end
     end
 
@@ -52,6 +54,10 @@ class BetterGoto
 
     y.downto(0).each do |j|
       line = j == y ? buffer[j][0...x] : buffer[j]
+
+      arrow_fun = line.rindex(/(\(.+=>)|([^\w]\w+\s*=>)/)
+
+      return j, arrow_fun unless arrow_fun.nil?
 
       line.reverse.each_char.with_index do |c, i|
         balance += 1 if c == '}'

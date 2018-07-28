@@ -3,25 +3,38 @@ class BetterGoto
 
   def goto_definition(cursor, buffer)
     word = word_at_cursor(cursor, buffer)
-    from = scope_start(cursor, buffer)
-    find_word(from, cursor, word, buffer)
+
+    find_definition(cursor, word, buffer)
   end
 
   private
+
+  def find_definition(cursor, word, buffer)
+    start = scope_start(cursor, buffer)
+    found = find_word(start, cursor, word, buffer)
+
+    if found.nil?
+      return find_definition(start, word, buffer) if start != [1, 0]
+      return cursor
+    end
+
+    found
+  end
 
   def find_word(from, to, word, buffer)
     y1, x1 = from
     y2, x2 = to
 
     (y1..y2).each do |y|
-      line = buffer[y]
+      line = y == y2 ? buffer[y][0...x2] : buffer[y]
+
       x = line.index(word)
       unless x.nil?
         return y, x
       end
     end
 
-    from
+    nil
   end
 
   def word_at_cursor(cursor, buffer)

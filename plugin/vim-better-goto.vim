@@ -13,3 +13,5 @@ ruby << EOF
   window.cursor = BetterGoto.new.goto_definition(cursor, buffer)
 EOF
 endfunction
+
+nmap gd :call GotoDefinition()<cr>
